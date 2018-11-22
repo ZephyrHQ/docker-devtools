@@ -1,1 +1,6 @@
 .env
+
+traefik/ssl/**
+!traefik/ssl/ca/.gitkeep
+!traefik/ssl/certs/.gitkeep
+!traefik/ssl/private/.gitkeep

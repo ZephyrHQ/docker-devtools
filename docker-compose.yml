@@ -1,1 +1,29 @@
+version: '3.5'
 
+networks:
+    traefik:
+        name: traefik
+
+services:
+    traefik:
+        build:
+            context: traefik
+        command: --debug=${TRAEFIK_DEBUG} --logLevel=${TRAEFIK_LOG_LEVEL} --docker.domain=${TRAEFIK_DOMAIN}
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./traefik/conf/traefik.toml:/etc/traefik/traefik.toml:ro
+            - ./traefik/ssl/ca:/etc/ssl/ca
+            - ./traefik/ssl/certs:/etc/ssl/certs
+            - ./traefik/ssl/private:/etc/ssl/private
+        ports:
+            - 127.0.0.1:80:80
+            - 127.0.0.1:443:443
+            - 127.0.0.1:8080:8080 # Dashboard UI
+        networks:
+            - traefik
+        restart: unless-stopped
+        labels:
+            - "traefik.enable=true"
+            - "traefik.backend=traefik-dashboard.traefik"
+            - "traefik.frontend.rule=Host:traefik-dashboard.${TRAEFIK_DOMAIN}"
+            - "traefik.port=8080"
