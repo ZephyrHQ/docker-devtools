@@ -4,11 +4,16 @@ networks:
     traefik:
         name: traefik
 
+volumes:
+    portainer_data:
+        driver: local
+
 services:
     traefik:
         build:
             context: traefik
         command: --debug=${TRAEFIK_DEBUG} --logLevel=${TRAEFIK_LOG_LEVEL} --docker.domain=${TRAEFIK_DOMAIN}
+        restart: unless-stopped
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./traefik/conf/traefik.toml:/etc/traefik/traefik.toml:ro
@@ -21,9 +26,23 @@ services:
             - 127.0.0.1:8080:8080 # Dashboard UI
         networks:
             - traefik
-        restart: unless-stopped
         labels:
             - "traefik.enable=true"
             - "traefik.backend=traefik-dashboard.traefik"
             - "traefik.frontend.rule=Host:traefik-dashboard.${TRAEFIK_DOMAIN}"
             - "traefik.port=8080"
+
+    portainer:
+        image: portainer/portainer:latest
+        command: -H unix:///var/run/docker.sock --no-auth
+        restart: unless-stopped
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - portainer_data:/data
+        networks:
+            - traefik
+        labels:
+            - "traefik.enable=true"
+            - "traefik.backend=portainer"
+            - "traefik.frontend.rule=Host:portainer.${TRAEFIK_DOMAIN}"
+            - "traefik.port=9000"
