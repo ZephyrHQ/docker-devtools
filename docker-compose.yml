@@ -2,7 +2,7 @@ version: '3.5'
 
 networks:
     traefik:
-        name: traefik
+        external: true
 
 volumes:
     portainer_data:
@@ -10,20 +10,18 @@ volumes:
 
 services:
     traefik:
-        build:
-            context: traefik
+        image: traefik:alpine
         command: --debug=${TRAEFIK_DEBUG} --logLevel=${TRAEFIK_LOG_LEVEL} --docker.domain=${TRAEFIK_DOMAIN}
         restart: unless-stopped
+        environment:
+            - GANDIV5_API_KEY=${TRAEFIK_GANDIV5_API_KEY}
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./traefik/conf/traefik.toml:/etc/traefik/traefik.toml:ro
-            - ./traefik/ssl/ca:/etc/ssl/ca
-            - ./traefik/ssl/certs:/etc/ssl/certs
-            - ./traefik/ssl/private:/etc/ssl/private
+            - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+            - ./traefik/acme.json:/etc/ssl/acme/acme.json
         ports:
             - 127.0.0.1:80:80
             - 127.0.0.1:443:443
-            - 127.0.0.1:8080:8080 # Dashboard UI
         networks:
             - traefik
         labels:
