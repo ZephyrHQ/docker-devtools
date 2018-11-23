@@ -13,6 +13,7 @@ On trouve le reverse proxy HTTP nommé [Traefik](https://docs.traefik.io/) et un
 | Service | Name | Frontend (`TRAEFIK_DOMAIN=traefik.docker`) | Description |
 |:--------|:-----|:---------|:------------|
 | [Traefik](https://docs.traefik.io/) | traefik | http://traefik-dashboard.traefik.docker/ | Traefik est un service de mandataire inverse (reverse-proxy) dynamique réalisé en Go par le français Emile Vauge il y a quelques petites années. |
+| [Portainer](https://portainer.io/) | portainer | http://portainer.traefik.docker/ | Portainer est une interface utilisateur de gestion qui vous permet de gérer facilement vos hôtes Docker et vos [Swarm](https://docs.docker.com/get-started/part4/) clusters. |
 
 ## Utilisation globale
 
@@ -79,3 +80,9 @@ Il est possible d'utiliser son propre certificat, pour cela il est nécessaire d
 De cette façon, vous pourrez utiliser un certificat signé par votre propre autorité.
 
 **Aide :** [Générer une autorité et des certificats signés par celle-ci](https://jamielinux.com/docs/openssl-certificate-authority/index.html)
+
+## Portainer
+### Description
+
+[Portainer](https://portainer.io/) est une interface de gestion des dockers installés sur la machine.
+Elle vous permettra d'avoir une visualisation de l'ensemble de vos ressources Docker mais aussi de les manager.
