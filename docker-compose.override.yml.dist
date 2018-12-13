@@ -1,0 +1,12 @@
+version: '3.5'
+
+#services:
+#    traefik:
+#        build:
+#            args:
+#                - SELFSIGNED_CERTS=1
+#        volumes:
+#            - ./traefik/conf/traefik.self-signed.toml:/etc/traefik/traefik.toml
+#            - ./traefik/ssl/ca:/etc/ssl/ca
+#            - ./traefik/ssl/certs:/etc/ssl/certs
+#            - ./traefik/ssl/private:/etc/ssl/private

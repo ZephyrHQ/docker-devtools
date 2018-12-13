@@ -10,15 +10,18 @@ volumes:
 
 services:
     traefik:
-        image: traefik:alpine
+        build:
+            context: traefik
+            args:
+                - SELFSIGNED_CERTS=0
         command: --debug=${TRAEFIK_DEBUG} --logLevel=${TRAEFIK_LOG_LEVEL} --docker.domain=${TRAEFIK_DOMAIN}
         restart: unless-stopped
         environment:
             - GANDIV5_API_KEY=${TRAEFIK_GANDIV5_API_KEY}
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./traefik/traefik.toml:/etc/traefik/traefik.toml
-            - ./traefik/acme.json:/etc/ssl/acme/acme.json
+            - ./traefik/conf/traefik.acme.toml:/etc/traefik/traefik.toml
+            - ./traefik/ssl/acme/acme.json:/etc/ssl/acme/acme.json
         ports:
             - 127.0.0.1:80:80
             - 127.0.0.1:443:443

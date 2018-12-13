@@ -20,6 +20,7 @@ On trouve le reverse proxy HTTP nommé [Traefik](https://docs.traefik.io/) et un
 Tout d'abord, il faut copier le fichier `env.dist`
 ```bash
 cp .env.dist .env
+cp docker-compose.override.yml.dist docker-compose.override.yml
 ```
 
 Ensuite il reste à construire et lancer l'ensembles des services.
@@ -51,10 +52,14 @@ services:
             - traefik
 ```
 
-Vous pouvez changer la valeur de la variable `TRAEFIK_DOMAIN` avant de lancer Traefik, cette valeur sera le domaine de tous vos services.
-Par exemple `portainer.traefik.docker` pour le service Portainer avec `TRAEFIK_DOMAIN=traefik.docker`.
+Plusieurs variables d'environnements sont nécessaires au bon fonctionnement du système. 
+On trouve tout d'abord la variable `TRAEFIK_DOMAIN` qui comme son nom l'indique définit le domaine des applications sous Traefik.
+Zephyr possède un nom de domaine pour le développement (zephyr-ci.top), à l'installation du projet c'est ce dernier qui sera utilisé avec Let's Encrypt. 
+Si vous ne voulez pas changer, il suffit de laisser `TRAEFIK_DOMAIN=local.zephyr-ci.top` dans le fichier `.env`
 
-Deux variables supplémentaire sont à disposition, `TRAEFIK_DEBUG` et `TRAEFIK_LOG_LEVEL` qui respectivement permettent d'activer ou non le debug et d'en préciser le niveau (INFO, DEBUG ou ERROR)
+Deux variables supplémentaires sont à disposition, `TRAEFIK_DEBUG` et `TRAEFIK_LOG_LEVEL` qui respectivement permettent d'activer ou non le debug et d'en préciser le niveau (INFO, DEBUG ou ERROR)
+
+Enfin, il reste la variable `TRAEFIK_GANDIV5_API_KEY` qui permet de générer les certificats Let's Encrypt. Pour la valeur de cette dernière, il faut faire la demande auprès d'un responsable Zephyr.
 
 ### Utilisateurs Linux
 
@@ -63,23 +68,26 @@ Il faut donc réaliser quelques actions avant de lancer traefik:
 * Ajoutez la ligne suivante à votre fichier `/etc/NetworkManager/dnsmasq.d/dnsmasq.conf`.
 ```
 # /etc/NetworkManager/dnsmasq.d/dnsmasq.conf
-address=/.docker/127.0.0.1
+address=/local.zephyr-ci.top/127.0.0.1
 ```
 
-### HTTPS
+### HTTPS sans Let's Encrypt
 
-Un certificat auto-signé est généré dans le conteneur lors de la première installation, le https est donc disponible sur tous les services.
+Par défaut Let's Encrypt est utilisé pour la génération des certificats, mais il est également possible d'utiliser un certificat auto-signé généré directement par le conteneur.
+Pour cela, il faut décommenter les lignes du fichier `docker-compose.override.yml`.
 
 ### Allez encore plus loin !
 
-Il est possible d'utiliser son propre certificat, pour cela il est nécessaire de placer les fichiers dans les dossiers correspondants:
+Pour utiliser son propre certificat, il est nécessaire de placer les fichiers dans les dossiers correspondants:
 * `proxy/traefik/ssl/ca`
 * `proxy/traefik/ssl/certs`
 * `proxy/traefik/ssl/private`
 
 De cette façon, vous pourrez utiliser un certificat signé par votre propre autorité.
 
-**Aide :** [Générer une autorité et des certificats signés par celle-ci](https://jamielinux.com/docs/openssl-certificate-authority/index.html)
+**Aide :** [Générer une autorité et des certificats signés par celle-ci](https://jamielinux.com/docs/openssl-certificate-authority/index.html)  
+**Bonus :** [Script de génération de certificats signés par une autorité](https://github.com/Ioni14/self-certificate-generator/releases)
+
 
 ## Portainer
 ### Description

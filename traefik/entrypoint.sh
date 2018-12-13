@@ -12,8 +12,8 @@ if traefik "$1" --help | grep -s -q "help"; then
     set -- traefik "$@"
 fi
 
-if [ ! -e "/etc/ssl/certs/traefik.cert.pem" ]; then
-    SUBJECT="/C=FR/ST=Calvados/L=Caen/O=Project SAS/OU=IT/CN=traefik-dashboard.${TRAEFIK_DOMAIN}"
+if [[ ! -e "/etc/ssl/certs/traefik.cert.pem" ]] && [[ ${SELFSIGNED_CERTS} = 1 ]] ; then
+    SUBJECT="/C=FR/ST=Calvados/L=Caen/O=Project SAS/OU=IT/CN=*.${TRAEFIK_DOMAIN}"
 
     echo "Generate key..."
     openssl genrsa -out /etc/ssl/private/traefik.key.pem 2048
