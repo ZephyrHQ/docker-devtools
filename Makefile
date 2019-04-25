@@ -1,9 +1,17 @@
+################################################################################
+# Variables
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 UID:=$(shell id -u)
 GID:=$(shell id -g)
 DOCKER_COMPOSE := docker-compose
+################################################################################
+# Copie des dists
+$(shell test ! -f docker-compose.override.yml && cp docker-compose.override.dist.yml docker-compose.override.yml)
+$(shell test ! -f .env && cp .env.dist .env)
+# Inclusion de l'environnement
 include .env
 export $(shell sed 's/=.*//' .env)
+################################################################################
 
 # Commandes
 build:

@@ -1,6 +1,6 @@
 version: '3.5'
 
-#services:
+services:
 #    traefik:
 #        build:
 #            args:
@@ -10,3 +10,19 @@ version: '3.5'
 #            - ./traefik/ssl/ca:/etc/ssl/ca
 #            - ./traefik/ssl/certs:/etc/ssl/certs
 #            - ./traefik/ssl/private:/etc/ssl/private
+
+
+    portainer:
+        image: portainer/portainer:latest
+        command: -H unix:///var/run/docker.sock --no-auth
+        restart: unless-stopped
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - portainer_data:/data
+        networks:
+            - traefik
+        labels:
+            - "traefik.enable=true"
+            - "traefik.backend=portainer"
+            - "traefik.frontend.rule=Host:portainer.${TRAEFIK_DOMAIN}"
+            - "traefik.port=9000"

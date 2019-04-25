@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3'
 
 networks:
     traefik:
@@ -21,7 +21,7 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./traefik/conf/traefik.acme.toml:/etc/traefik/traefik.toml
-            - ./traefik/ssl/acme/acme.json:/etc/ssl/acme/acme.json
+            - ./traefik/acme.json:/etc/ssl/acme/acme.json
         ports:
             - 127.0.0.1:80:80
             - 127.0.0.1:443:443
@@ -29,21 +29,7 @@ services:
             - traefik
         labels:
             - "traefik.enable=true"
-            - "traefik.backend=traefik-dashboard.traefik"
-            - "traefik.frontend.rule=Host:traefik-dashboard.${TRAEFIK_DOMAIN}"
+            - "traefik.backend=traefik.traefik"
+            - "traefik.frontend.rule=Host:traefik.${TRAEFIK_DOMAIN}"
             - "traefik.port=8080"
 
-    portainer:
-        image: portainer/portainer:latest
-        command: -H unix:///var/run/docker.sock --no-auth
-        restart: unless-stopped
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-            - portainer_data:/data
-        networks:
-            - traefik
-        labels:
-            - "traefik.enable=true"
-            - "traefik.backend=portainer"
-            - "traefik.frontend.rule=Host:portainer.${TRAEFIK_DOMAIN}"
-            - "traefik.port=9000"

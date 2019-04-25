@@ -2,8 +2,4 @@
 
 docker-compose.override.yml
 
-traefik/ssl/**
-!traefik/ssl/ca/.gitkeep
-!traefik/ssl/certs/.gitkeep
-!traefik/ssl/private/.gitkeep
-!traefik/ssl/acme/.gitkeep
+traefik/acme.json
